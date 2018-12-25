@@ -1,2 +1,1 @@
-init
 Detour. Project building
