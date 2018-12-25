@@ -193,7 +193,7 @@ class MemberAction extends MyAction {
         $ufModel = D('UF');
 
         //生成订单号
-        $tradeNo = "xzpay".date("YmdHis").mt_rand(1000,9999);
+        $tradeNo = "sport".date("YmdHis").mt_rand(1000,9999);
         $data['out_trade_no'] = $tradeNo;
         $data['order_money'] = $affairInfo['promise_money'];
         $rs = $ufModel->where($where)->find();
