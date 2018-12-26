@@ -199,18 +199,20 @@ class MemberAction extends MyAction {
         $rs = $ufModel->where($where)->find();
 
 
+        //检查参加条件
+        $checkRs = checkJoin($affairInfo);
+        if(!$checkRs['status']) {
+            $this->ajaxReturn($rs, $checkRs['info'], 402);
+        }
+        //检查参加条件
+
 
         if($rs) {
             $payMod = D('Pay');
             $jsApiParameters = $payMod->downOrder($affairInfo['title'], $rs['out_trade_no'], $affairInfo['promise_money'], $this->openid, $affairInfo['id']);
             $this->ajaxReturn($jsApiParameters, '已提交报名，待支付保证金', 200);
         } else {
-            //检查参加条件
-            $checkRs = checkJoin($affairInfo);
-            if(!$checkRs['status']) {
-                $this->ajaxReturn($rs, $checkRs['info'], 402);
-            }
-            //检查参加条件
+
             $id = $ufModel->add($data);
             if($id) {
                 $payMod = D('Pay');
@@ -321,7 +323,7 @@ class MemberAction extends MyAction {
         $id = intval($id);
         $ufMod = D('UF');
         $w['affair_id'] = $id;
-        $w['status'] = 0;
+        // $w['status'] = 0;
         $w['open_id'] = $this->openid;
 
         $ufInfo = $ufMod->where($w)->find();

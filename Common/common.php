@@ -340,7 +340,7 @@ function checkJoin($affairInfo)
         return $rs;
     }
 
-    if( $affairInfo['open_status'] === 0 ) {
+    if( $affairInfo['open_status'] == "0" ) {
         $rs['status'] = false;
         $rs['info'] = '活动已结束报名';
         return $rs;

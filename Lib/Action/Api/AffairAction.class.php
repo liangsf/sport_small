@@ -87,6 +87,19 @@ class AffairAction extends MyAction {
         $info['userName'] = $user['name'];
         $info['nickname'] = $user['nickname'];
 
+        //获取当前人是否参与
+        $ufWhere['affair_id'] = $id;
+        $ufWhere['open_id'] = $this->openid;
+        $ufWhere['status'] = array('gt', 0);
+        $ufWhere['pay_type'] = array('gt', 0);
+        $ufInfo = M('UserAffair')->where($ufWhere)->find();
+        if(!empty($ufInfo)) {
+            $info['join_status'] = true;
+        } else {
+            $info['join_status'] = false;
+        }
+        //获取当前人是否参与
+
         $this->ajaxReturn($info, 'ok', 200);
     }
 
