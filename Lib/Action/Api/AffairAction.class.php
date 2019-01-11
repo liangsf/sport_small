@@ -160,6 +160,7 @@ class AffairAction extends MyAction {
         $ufModel = D('UF');
 
         $where['a.open_id'] = strval($this->openid);
+        $where['a.pay_type'] = array('gt', 0);
         // if(isset($data['id'])) {
         //     $where['a.affair_id'] = $data['affair_id'];
         // }
@@ -171,14 +172,18 @@ class AffairAction extends MyAction {
         }
 
         //判断是我参与的还是我创建的
-        if(isset($data['isme'])) {
-            if($data['isme'] == 'true') {
+        if(isset($data['isme']) || isset($_GET['isme'])) {
+            if($data['isme'] == 'true' || $_GET['isme']==1) {
                 //$where['_string'] =  ' af.open_id = a.open_id ';
 
                 $awhere['a.open_id'] = strval($this->openid);
                 $list = D('Affair')->search($awhere, $page, $size);
                 $list = $this->getWaitAllot($list);
-                $this->ajaxReturn($list, '', 200);
+                $count = D('Affair')->where(array('open_id'=>$awhere['a.open_id']))->count();
+                $res['list'] = $list?$list:[];
+                $res['total'] = $count;
+
+                $this->ajaxReturn($res, '', 200);
             } else {
                 $where['_string'] =  ' af.open_id != a.open_id ';
             }
@@ -186,10 +191,13 @@ class AffairAction extends MyAction {
         }
 
         $list = $ufModel->search($where, $page, $size);
+        $count = $ufModel->searchCount($where);
 
         $list = $this->getWaitAllot($list);
 
-        $this->ajaxReturn($list, '', 200);
+        $res['list'] = $list?$list:[];
+        $res['total'] = $count;
+        $this->ajaxReturn($res, '', 200);
     }
 
     private function getWaitAllot($list, $isList=true)

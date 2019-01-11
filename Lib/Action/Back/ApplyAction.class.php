@@ -90,7 +90,7 @@ class ApplyAction extends MyAction
         $data['approval_time'] = date('Y-m-d H:i:s', time());
         $ok = M('AffairCancelApply')->where($w)->save($data);
         if( $ok > 0) {
-            if(type=1) {
+            if($type==1) {
                 $this->refundJoinMoney($id);
             }
             $this->ajaxReturn('', '审批成功', 200);
