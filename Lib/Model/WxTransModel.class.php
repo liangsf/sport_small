@@ -9,7 +9,7 @@ class WxTransModel extends CommonModel {
 	public function WxTransfers($openid,$money=0, $title='红包')
     {
 
-        $money = $money*100; //最低1元，单位分
+        $money = $money*100;//$money*100; //最低1元，单位分
 
         $sender = "朽箸";
 
@@ -37,6 +37,7 @@ class WxTransModel extends CommonModel {
 
         // $unifiedOrder = simplexml_load_string($res, 'SimpleXMLElement', LIBXML_NOCDATA);
 		$unifiedOrder = json_decode(json_encode(simplexml_load_string($res, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+        
 
 		$res = array();
 		$res['data'] = '';
@@ -61,12 +62,11 @@ class WxTransModel extends CommonModel {
 		$data['payment_no'] = $unifiedOrder['payment_no'];
 		$data['payment_time'] = $unifiedOrder['payment_time'];
 		$data['partner_trade_no'] = $unifiedOrder['partner_trade_no'];
-		$data['wx_response'] = json_encode($unifiedOrder);
+        $data['wx_response'] = json_encode($unifiedOrder);
 		$res['data'] = $data;
 		$res['info'] = '领取成功';
 		$res['status'] = true;
         return $res;
-
 
     }
 
@@ -202,8 +202,8 @@ class WxTransModel extends CommonModel {
 
     //请确保您的libcurl版本是否支持双向认证，版本高于7.20.1
 
-    $sslCertPath = "D:\wamp\www\dong\code\cert\apiclient_cert.pem";
-			$sslKeyPath = "D:\wamp\www\dong\code\cert\apiclient_key.pem";
+    $sslCertPath = "/usr/local/nginx/conf/wx_cert/apiclient_cert.pem";
+			$sslKeyPath = "/usr/local/nginx/conf/wx_cert/apiclient_key.pem";
 			curl_setopt($ch,CURLOPT_SSLCERTTYPE,'PEM');
 			curl_setopt($ch,CURLOPT_SSLCERT, $sslCertPath);
 			curl_setopt($ch,CURLOPT_SSLKEYTYPE,'PEM');

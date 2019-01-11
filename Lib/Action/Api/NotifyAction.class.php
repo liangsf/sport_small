@@ -1,14 +1,14 @@
 <?php
 
-include "./WxPay/lib/WxPay.Api.php";
-include './WxPay/lib/WxPay.Notify.php';
+include "/data/www/pinche/Project/sport/WxPay/lib/WxPay.Api.php";
+include '/data/www/pinche/Project/sport/WxPay/lib/WxPay.Notify.php';
 class NotifyAction extends Action {
 
 
     //支付成功的回调
     public function payNotify()
     {
-        // $xml = '<xml><appid><![CDATA[wx486d78adc2a70186]]></appid><attach><![CDATA[test]]></attach><bank_type><![CDATA[CFT]]></bank_type><cash_fee><![CDATA[1]]></cash_fee><fee_type><![CDATA[CNY]]></fee_type><is_subscribe><![CDATA[N]]></is_subscribe><mch_id><![CDATA[1487094692]]></mch_id><nonce_str><![CDATA[a6ij4cyjgl67butf8k4d0xc6jwwiv5jv]]></nonce_str><openid><![CDATA[ovABH4_ex4yiyUNLHEc086r5wQ1U]]></openid><out_trade_no><![CDATA[xzpay20181203111609]]></out_trade_no><result_code><![CDATA[SUCCESS]]></result_code><return_code><![CDATA[SUCCESS]]></return_code><sign><![CDATA[319959D1DDFF8C9D50CAFA5A67EA8993186F5A033AB41087C46C45800BB34B93]]></sign><time_end><![CDATA[20181203111654]]></time_end><total_fee>1</total_fee><trade_type><![CDATA[JSAPI]]></trade_type><transaction_id><![CDATA[4200000234201812033874964111]]></transaction_id></xml>';
+         //$xml = '<xml><appid><![CDATA[wx486d78adc2a70186]]></appid><attach><![CDATA[test]]></attach><bank_type><![CDATA[CFT]]></bank_type><cash_fee><![CDATA[1]]></cash_fee><fee_type><![CDATA[CNY]]></fee_type><is_subscribe><![CDATA[N]]></is_subscribe><mch_id><![CDATA[1487094692]]></mch_id><nonce_str><![CDATA[a6ij4cyjgl67butf8k4d0xc6jwwiv5jv]]></nonce_str><openid><![CDATA[ovABH4_ex4yiyUNLHEc086r5wQ1U]]></openid><out_trade_no><![CDATA[xzpay20181203111609]]></out_trade_no><result_code><![CDATA[SUCCESS]]></result_code><return_code><![CDATA[SUCCESS]]></return_code><sign><![CDATA[319959D1DDFF8C9D50CAFA5A67EA8993186F5A033AB41087C46C45800BB34B93]]></sign><time_end><![CDATA[20181203111654]]></time_end><total_fee>1</total_fee><trade_type><![CDATA[JSAPI]]></trade_type><transaction_id><![CDATA[4200000234201812033874964111]]></transaction_id></xml>';
 
         $xml = $GLOBALS['HTTP_RAW_POST_DATA'];
 
@@ -25,11 +25,14 @@ class NotifyAction extends Action {
             //TODO失败,不是支付成功的通知
             //如果有需要可以做失败时候的一些清理处理，并且做一些监控
             $msg = "异常异常";
+            //file_put_contents('./log.txt',$msg , FILE_APPEND);
             echo $msg;
+            
             return false;
         }
         if(!array_key_exists("transaction_id", $data)){
             $msg = "输入参数不正确";
+            //file_put_contents('./log.txt',$msg , FILE_APPEND);
             echo $msg;
             return false;
         }
@@ -40,10 +43,12 @@ class NotifyAction extends Action {
 			if($checkResult == false){
 				//签名错误
                 $msg = "签名错误";
+                //file_put_contents('./log.txt',$msg , FILE_APPEND);
                 echo $msg;
 				return false;
 			}
 		} catch(Exception $e) {
+            //file_put_contents('./log.txt',$e->getMessage() , FILE_APPEND);
             echo $e->getMessage();
             return false;
 		}
@@ -51,6 +56,7 @@ class NotifyAction extends Action {
         //查询订单，判断订单真实性
 		if(!$this->Queryorder($data["transaction_id"])){
 			$msg = "订单查询失败";
+            //file_put_contents('./log.txt',$msg , FILE_APPEND);
             echo $msg;
 			return false;
 		}
@@ -64,13 +70,14 @@ class NotifyAction extends Action {
         $ufWhere['open_id'] = $data['openid'];
         $ok = D('UF')->where($ufWhere)->save($ufData);*/
         $ufData['pay_type'] = 1;    //设置支付状态
+        //$ufData['status'] = 1;
         $ufData['pay_time'] = date('Y-m-d H:i:s', time());
         $ufWhere['out_trade_no'] = $data['out_trade_no'];
         $ufWhere['open_id'] = $data['openid'];
         //$ufWhere['status'] = 1;
         $ufWhere['pay_type'] = 0;
         $ok = D('UF')->where($ufWhere)->save($ufData);
-
+        file_put_contents('./log.txt',M()->getLastSql() , FILE_APPEND);
         if($ok) {
             //增加交易记录
             $tsMod = D('Transaction');
@@ -86,14 +93,15 @@ class NotifyAction extends Action {
             $tsData['wx_response'] = json_encode($data);
 
             $tsMod->add($tsData);
-
+            //file_put_contents('./log.txt',M()->getLastSql() , FILE_APPEND);
+            
             exit('<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>');
         }
 
 
         //print_r($data);
 
-
+        
     }
 
     //查询订单

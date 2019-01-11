@@ -2,7 +2,7 @@
 /**
  * @author lsf <lsf880101@foxmail.com>
  */
-include "./WxPay/lib/WxPay.Api.php";
+include "/data/www/pinche/Project/sport/WxPay/lib/WxPay.Api.php";
 class PayModel extends CommonModel {
 
 	//统一下单
@@ -15,7 +15,7 @@ class PayModel extends CommonModel {
         	// $openId = $tools->GetOpenid();
         	//②、统一下单
         	$input = new WxPayUnifiedOrder();
-        	$input->SetBody("朽著科技-".$title);
+        	$input->SetBody("中都体育-".$title);
         	$input->SetAttach($attach);
         	$input->SetOut_trade_no($tradeNo);
         	$input->SetTotal_fee($money);
@@ -31,6 +31,10 @@ class PayModel extends CommonModel {
 			// echo  $moneyl;
 			// echo $openId;
 			// exit;
+            
+            $strs = $title.'-'.$tradeNo.'-'.$openId.'-'.$attach;
+            
+            file_put_contents('./log.txt',$strs , FILE_APPEND);
 
 
         	$config = new WxPayConfig();
@@ -87,12 +91,12 @@ class PayModel extends CommonModel {
 	 */
 	public function refund ($out_trade_no, $affair_info)
 	{
-		$array = array();
-		$array['status'] = false;
-		$array['info'] = '退款失败';
+        $array = array();
+        $array['status'] = false;
+        $array['info'] = '退款失败';
 
 		if(( isset($out_trade_no) && $out_trade_no!='' && preg_match("/^[0-9a-zA-Z]{10,64}$/i", $out_trade_no, $matches) )) {
-
+			
 			//根据商户订单退款
 			try{
 				// $transaction_id = '4200000215201812043375560422';//$_REQUEST["transaction_id"];
@@ -109,6 +113,7 @@ class PayModel extends CommonModel {
 				$input->SetOut_refund_no("xzsdkphp".date("YmdHis"));
 				$input->SetOp_user_id($config->GetMerchantId());
 				$rs = WxPayApi::refund($config, $input);
+
 				if($rs['return_code'] == 'SUCCESS' && $rs['result_code'] == 'SUCCESS') {
 					//增加交易记录
 		            $tsMod = D('Transaction');
@@ -120,8 +125,8 @@ class PayModel extends CommonModel {
 		            $tsData['out_trade_no'] = $rs['out_trade_no'];
 		            $tsData['trade_type'] = 'JSAPI';
 		            $tsData['transaction_id'] = $rs['transaction_id'];
-		            $tsData['refund_fee'] = $rs['refund_fee'];
-		            $tsData['wx_response'] = json_encode($rs);
+                    $tsData['refund_fee'] = $rs['refund_fee'];
+                    $tsData['wx_response'] = json_encode($rs);
 		            $tsData['time_end'] = date('YmdHis', time());//$affair_info['pay_time'];	//退款时间
 
 		            $ok = $tsMod->add($tsData);

@@ -260,7 +260,7 @@ public function sendAffairMsg($touser, $form_id, $cont){
     $time = date('Y-m-d H:i:s', time());
     $data = '{
         "touser":"'.$touser.'",
-        "template_id":"NAk47nmB6pEtqMrbeN7UV_xvSqa3E6BaxDjpEgUIrr0",
+        "template_id":"UOgsvnl0BwyrUtdEBBUxJDkCfpHUsBDxdV1q7yOXFx4",
         "form_id":"'.$form_id.'",
         "page":"page/home/detail?mid='.$cont['id'].'",
         "data":{

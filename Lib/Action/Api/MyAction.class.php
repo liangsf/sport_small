@@ -30,7 +30,7 @@ class MyAction extends Action {
     }
 
     //获取参与活动的人员
-    protected function getJoinAffairPersonCount($affairId, $status)
+    public function getJoinAffairPersonCount($affairId, $status)
     {
         $where['id'] = intval($affairId);
         $where['status'] = intval($status);

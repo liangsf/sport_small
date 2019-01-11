@@ -32,7 +32,6 @@ class TaskAction extends Action {
                 //获取form_id
                 $formWhere['open_id'] = $value['open_id'];
                 $formWhere['form_id'] = array('neq', 'the formId is a mock one');
-                $formWhere['create_time'] = array('gt', time()-(3600*7));
                 $form_rs = $formMod->where($formWhere)->order('create_time asc')->find();
 
                 $cont['id'] = $value['affair_id'];
@@ -68,11 +67,10 @@ class TaskAction extends Action {
     {
         import("yueba.Action.JssdkAction");
         $jssdk = new JssdkAction(C('WX_AppID'), C('WX_AppSecret'));
-
+        
         $formMod = M('Formids');
         $formWhere['open_id'] = $openid;
         $formWhere['form_id'] = array('neq', 'the formId is a mock one');
-        $formWhere['create_time'] = array('gt', time()-(3600*24*7));
         $form_rs = $formMod->where($formWhere)->order('create_time asc')->find();
         $rs = $jssdk->sendAffairMsg($openid, $form_rs['form_id'], $cont);
         $rs = (array)json_decode($rs);

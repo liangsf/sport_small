@@ -23,8 +23,6 @@ class MyAction extends Action {
 
         $this->user = session('user');
 
-        //print_r($GLOBALS['HTTP_RAW_POST_DATA']);
-
         $log = getPostPayload()?getPostPayload():$_GET;
         $str = date('Y-m-d H:i:s',time()).'----------'.$_SERVER['REQUEST_URI'].':'.$_SERVER['HTTP_ORIGIN'].':'.json_encode($log)."\r\n";
         file_put_contents('./back_log.txt',$str , FILE_APPEND);
@@ -32,7 +30,7 @@ class MyAction extends Action {
 
 
         if (!$this->user) {
-            //$this->ajaxReturn('', '请登录', 400);
+            $this->ajaxReturn('', '请登录', 400);
         }
 
 

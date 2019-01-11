@@ -1,6 +1,5 @@
 <?php
-include "./WxPay/lib/WxPay.Api.php";
-include './WxPay/lib/WxPay.Notify.php';
+
 class NoticeAction extends MyAction {
 
     public function __construct() {

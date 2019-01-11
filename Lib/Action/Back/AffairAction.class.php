@@ -10,7 +10,7 @@ class AffairAction extends MyAction
     /**
      * [find 活动详情及参与用户]
      * @param  integer $id [活动id]
-     * @return [json]      {data:{list:[参与人列表],info:活动详情, info:, status:200}
+     * @return [json]      {data:{join_list}}
      */
     public function find($id=0) {
         $id = intval($id);

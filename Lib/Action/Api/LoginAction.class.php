@@ -8,6 +8,7 @@ class LoginAction extends MyAction {
         parent::__construct();
     }
     public function index(){
+        return false;
         try {
             $code = Util::getHttpHeader(WX_HEADER_CODE);
             $encryptedData = Util::getHttpHeader(WX_HEADER_ENCRYPTED_DATA);
@@ -46,6 +47,7 @@ class LoginAction extends MyAction {
         $uuid = 'xz'.substr($charid, 8, 5).substr($charid,16, 5);
 
         $data['uuid'] = $uuid;
+
         $data['nickname'] = strval($data['nickName']);
         $data['open_id'] = strval($this->openid);
         $data['city'] = strval($data['city']);
